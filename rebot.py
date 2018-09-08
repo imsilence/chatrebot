@@ -32,6 +32,7 @@ chat = itchat.new_instance()
 def firendChat(msg):
     if msg.get("User").get("NickName") == gconf.ADMIN:
         logger.info(msg.get("Text"))
+        return "收到消息:{0}".format(msg.get("Text"))
 
 
 @chat.msg_register([TEXT], isGroupChat=True)
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s:%(message)s",
         filename=os.path.join(gconf.BASE_DIR, "logs", "rebot.log"),
-        filemode="a"
+        filemode="w"
     )
     write_pid()
     main()
