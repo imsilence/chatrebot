@@ -1,14 +1,16 @@
 # 使用 #
 
 1. 安装环境
+```
     yum install redis
     yum install xdg-utils
     pip install -r requirements.txt
+```
 
 2. 配置
 
     修改订阅任务 conf/task.py
-
+```
     TEXTS数组为文本任务, ARTICLES数组为订阅号文章任务
 
     公共参数:
@@ -27,14 +29,16 @@
         "subjects" : 订阅号文章
         "interval" : 最新发布的文章(interval秒)
         "topn": 发送文章最多数量
-
+```
 3. 登陆
-    python rebot.py
-    手机扫描二维码登录
-    按ctrl+c退出
-
+```
+    a. python rebot.py
+    b. 手机扫描二维码登录
+    c. 按ctrl+c退出
+```
 4. 启动
+```
     nohup python rebot.py >/dev/null 2>&1 &
-
+```
 5. 查看日志
     logs/rebot.log
