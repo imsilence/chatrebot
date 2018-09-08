@@ -1,0 +1,3 @@
+wechatsogou==4.2.2
+itchat==1.3.10
+redis==2.10.6
