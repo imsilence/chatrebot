@@ -52,8 +52,10 @@ class MsgHandler(Thread):
         for friend in self.chat.get_friends(update=True):
             name = friend.get('RemarkName', '')
             name = friend.get('NickName',  '') if name == '' else name
+            name = name.encode(encoding="gbk", errors="ignore").decode(encoding="gbk")
             uid = friend.get('UserName', '')
             friends[name] = uid
+
         return friends
 
 
@@ -62,6 +64,8 @@ class MsgHandler(Thread):
         for chatroom in self.chat.get_chatrooms(update=True):
             name = chatroom.get('RemarkName', '')
             name = chatroom.get('NickName',  '') if name == '' else name
+            name = name.encode(encoding="gbk", errors="ignore").decode(encoding="gbk")
             uid = chatroom.get('UserName', '')
             chatrooms[name] = uid
+
         return chatrooms

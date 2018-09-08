@@ -4,6 +4,7 @@ import logging
 import traceback
 import threading
 import os
+import time
 
 import itchat
 from itchat.content import TEXT, MAP, CARD, NOTE, SHARING, PICTURE, RECORDING, VOICE, ATTACHMENT, VIDEO, FRIENDS, SYSTEM
@@ -20,6 +21,7 @@ from scheduler import TaskScheduler
 
 from executors.text import TextExecutor
 from executors.article import ArticleExecutor
+from executors.joke import JokeExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -48,13 +50,13 @@ def mpChat(msg):
 
 
 @chat.msg_register([SHARING], isMpChat=True)
-def sharingMsg(msg)
+def sharingMsg(msg):
     try:
         item = {}
         item["name"] = msg.get("User").get("NickName")
         item["url"] = msg.get("Url")
         item["title"] = msg.get("Text")
-        item["time"] = msg.get("CreateTime")
+        item["time"] = time.time() #msg.get("CreateTime")
 
         key = "{prefix}:{suffix}".format(prefix=gconf.REDIS_KEY_ARTICLE_PREFIX, suffix=MD5.enctype(item["name"]))
         cache.set(key, item)
@@ -82,6 +84,12 @@ def main():
 
         for article in tasks.ARTICLES:
             scheduler.register(article.get("name"), article.get("time"), ArticleExecutor(**article, cache=cache))
+
+        for joke in tasks.JOKES:
+            scheduler.register(joke.get("name"), joke.get("time"), JokeExecutor(**joke))
+
+
+
         scheduler.start()
 
         chat.run()

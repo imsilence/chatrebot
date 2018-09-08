@@ -34,7 +34,7 @@ class TaskScheduler(Thread):
 
     def register(self, name, time, executor, *args, **kwargs):
         if name in self.tasks:
-            raise Exception("task [{name}] already exists".format(name))
+            raise Exception("task [{name}] already exists".format(name=name))
         self.tasks[name] = Task(name, time, executor)
 
 
@@ -75,8 +75,10 @@ class TaskScheduler(Thread):
                 logger.info("exec task: %s", task)
                 executor = task.executor
                 try:
-                    if executor.execute():
-                        mq.put({"to" : executor.get_to(), "msg" : executor.get_msg()})
+                    isok = executor.execute()
+                    if not isok:
+                        continue
+                    mq.put({"to" : executor.get_to(), "msg" : executor.get_msg()})
                 except BaseException as e:
                     logger.exception(e)
                     logger.error(traceback.format_exc())
