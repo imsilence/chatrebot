@@ -102,6 +102,11 @@ def main():
         #chat.logout()
         pass
 
+def write_pid():
+    logger.info("running[%s]...", os.getpid())
+    pid = os.path.join(gconf.BASE_DIR, "rebot.pid")
+    with open(pid, "wt") as fhandler:
+        fhandler.write(str(os.getpid()))
 
 if __name__ == "__main__":
     logging.basicConfig(
@@ -110,4 +115,5 @@ if __name__ == "__main__":
         filename=os.path.join(gconf.BASE_DIR, "logs", "rebot.log"),
         filemode="a"
     )
+    write_pid()
     main()
