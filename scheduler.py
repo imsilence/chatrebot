@@ -69,15 +69,17 @@ class TaskScheduler(Thread):
         while True:
             now = datetime.now()
             for name, task in tasks.items():
-                if judge(now, task):
-                    logger.info("exec task: %s", task)
-                    executor = task.executor
-                    try:
-                        if executor.execute():
-                            mq.put({"to" : executor.get_to(), "msg" : executor.get_msg()})
-                    except BaseException as e:
-                        logger.exception(e)
-                        logger.error(traceback.format_exc())
+                if not judge(now, task):
+                    continue
+
+                logger.info("exec task: %s", task)
+                executor = task.executor
+                try:
+                    if executor.execute():
+                        mq.put({"to" : executor.get_to(), "msg" : executor.get_msg()})
+                except BaseException as e:
+                    logger.exception(e)
+                    logger.error(traceback.format_exc())
 
             time.sleep(sleep)
 

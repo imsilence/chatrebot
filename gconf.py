@@ -14,4 +14,4 @@ REDIS_CACHE = {
     "decode_responses" : True
 }
 
-REDIS_KEY_ARTICLE_PREFIX = "rebot:weixin:mp:last:article:"
+REDIS_KEY_ARTICLE_PREFIX = "rebot:weixin:mp:last:article"

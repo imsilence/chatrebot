@@ -48,9 +48,7 @@ def mpChat(msg):
 
 
 @chat.msg_register([SHARING], isMpChat=True)
-def sharingMsg(msg):
-    logger.info("sharing: %s", msg)
-
+def sharingMsg(msg)
     try:
         item = {}
         item["name"] = msg.get("User").get("NickName")
@@ -60,6 +58,7 @@ def sharingMsg(msg):
 
         key = "{prefix}:{suffix}".format(prefix=gconf.REDIS_KEY_ARTICLE_PREFIX, suffix=MD5.enctype(item["name"]))
         cache.set(key, item)
+        logger.info("cache sharing: %s", item)
     except BaseException as e:
         logger.exception(e)
         logger.error(traceback.format_exc())
