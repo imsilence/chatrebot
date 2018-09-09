@@ -47,7 +47,7 @@ class ArticleExecutor(BaseExecutor):
 
 
     def get_msg(self):
-        msgs = ["[{0}]{1}推荐文章:\n".format(datetime.now().strftime("%Y-%m-%d"), self.name)]
+        msgs = ["[{0}]{1}:\n".format(datetime.now().strftime("%Y-%m-%d"), self.name)]
         for idx, article in enumerate(self.articles):
             msgs.append("{idx}. [{name}]{title}\n{url}\n".format(idx=idx + 1, **article))
         return "\n".join(msgs)
