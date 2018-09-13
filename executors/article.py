@@ -8,6 +8,7 @@ from collections import namedtuple
 
 import gconf
 from utils.md5 import MD5
+from utils.url import URL
 from .base import BaseExecutor
 
 logger = logging.getLogger(__name__)
@@ -49,5 +50,6 @@ class ArticleExecutor(BaseExecutor):
     def get_msg(self):
         msgs = ["[{0}]{1}:\n".format(datetime.now().strftime("%Y-%m-%d"), self.name)]
         for idx, article in enumerate(self.articles):
+            article["url"] = URL.short(article.get("url")) # short url
             msgs.append("{idx}. [{name}]{title}\n{url}\n".format(idx=idx + 1, **article))
         return "\n".join(msgs)
