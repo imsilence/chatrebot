@@ -43,7 +43,12 @@ class MsgHandler(Thread):
             for touser in to:
                 uid = friends.get(touser, chatrooms.get(touser))
                 if uid:
-                    chat.send(item.get("msg"), uid)
+                    try:
+                        chat.send(item.get("msg"), uid)
+                    except BaseException as e:
+                        logger.exception(e)
+                        logger.error(traceback.format_exc())
+
             logger.info("handler msg: %s, to:%s", item.get("msg"), item.get("to"))
 
 

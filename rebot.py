@@ -22,11 +22,13 @@ from scheduler import TaskScheduler
 from executors.text import TextExecutor
 from executors.article import ArticleExecutor
 from executors.joke import JokeExecutor
+from executors.tuling import TulingExecutor
 
 logger = logging.getLogger(__name__)
 
 cache = Cache()
 chat = itchat.new_instance()
+tuling = TulingExecutor("")
 
 @chat.msg_register([TEXT], isFriendChat=True)
 def firendChat(msg):
@@ -38,13 +40,15 @@ def firendChat(msg):
 @chat.msg_register([TEXT], isGroupChat=True)
 def groupChat(msg):
     #print("group:", msg)
-    #return msg.get("Text")
-    pass
+    if msg.get("IsAt"):
+        logger.info(msg.get("Text"))
+        tuling.execute(msg.get("FromUserName"), msg.get("Text"))
+        return tuling.get_msg()
 
 
 @chat.msg_register([TEXT, MAP, CARD, NOTE, SHARING, PICTURE, RECORDING, VOICE, ATTACHMENT, VIDEO, FRIENDS, SYSTEM], isMpChat=True)
 def mpChat(msg):
-    print("mp:", msg)
+    #print("mp:", msg)
     #return msg.get("Text")
     pass
 

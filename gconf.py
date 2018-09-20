@@ -15,3 +15,7 @@ REDIS_CACHE = {
 }
 
 REDIS_KEY_ARTICLE_PREFIX = "rebot:weixin:mp:last:article"
+
+
+TULING_USERID = 'kk'
+TULING_APIKEY = 'f5e166b44aae4be5912dfcbd6d3bb72b'
