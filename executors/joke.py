@@ -36,8 +36,9 @@ class JokeExecutor(BaseExecutor):
                 joke_type = joke.get("type")
                 joke_content = joke.get(joke_type)
                 if "text" == joke_type:
-
+                    self.msg = joke_content
                     break
+
                 response = requests.get(joke_content)
                 if not response.ok:
                     continue
