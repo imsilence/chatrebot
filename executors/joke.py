@@ -31,7 +31,7 @@ class JokeExecutor(BaseExecutor):
                 return False
 
             jokes = json.get("data")
-            for _ in range(5):
+            for _ in range(10):
                 joke = random.choice(jokes)
                 joke_type = joke.get("type")
                 joke_content = joke.get(joke_type)
@@ -46,11 +46,10 @@ class JokeExecutor(BaseExecutor):
                 path = os.path.join(gconf.BASE_DIR, "temp", "{0}.{1}".format(random.randint(0, 10), suffix))
                 with open(path, "wb") as fhandler:
                     fhandler.write(response.content)
-                joke_content = "@{0}@{1}".format(joke_types.get(joke_type), path)
+                self.msg = "@{0}@{1}".format(joke_types.get(joke_type), path)
                 break
 
-            self.msg = joke_content
-            return joke_content
+            return self.msg
         except BaseException as e:
             logger.exception(e)
             logger.error(traceback.format_exc())
