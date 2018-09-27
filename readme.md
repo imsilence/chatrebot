@@ -11,24 +11,27 @@
 
     修改订阅任务 conf/task.py
 ```
-    TEXTS数组为文本任务, ARTICLES数组为订阅号文章任务
+    定义数组PROD_TASKS元素
 
-    公共参数:
+    参数:
         time: 执行时间, 元组类型, 示例:
             每天执行一次(9点): (9, 0, 0)
             每小时执行一次(9:10, 10:10, 11:10, ...): ("*", 10, 0)
 
         name: 任务名称, 不能重复
         to: 接受用户和群组列表
+        type: 任务类型, 可选值: text, joke, article
+        kwargs: 任务参数
 
-    文本任务:
+    文本任务kwargs:
         msg: 发送消息
         tpl: 模板, 默认: "[{time}]: {msg}", 字符串占位符只能包含time和msg
 
-    文章任务:
+    文章任务kwargs:
         "subjects" : 订阅号文章
         "interval" : 最新发布的文章(interval秒)
         "topn": 发送文章最多数量
+        "time_format": "%Y-%m-%d %H:%M:%S"
 ```
 3. 登陆
 ```
