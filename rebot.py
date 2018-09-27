@@ -69,11 +69,14 @@ def mpChatSharing(msg):
 
 def main():
     try:
-
         chat.auto_login(hotReload=True, statusStorageDir=os.path.join(gconf.BASE_DIR, "temp", "chat.pkl"), enableCmdQR=2)
 
-        ENS(chat, mq_msg).start()
-        Handler(mq_task, mq_msg, cache).start()
+        for _ in range(10):
+            ENS(chat, mq_msg).start()
+
+        for _ in range(10):
+            Handler(mq_task, mq_msg, cache).start()
+
         Scheduler(tasks.TASKS, mq_task).start()
 
         chat.run()
