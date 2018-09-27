@@ -14,42 +14,37 @@ from .base import BaseExecutor
 logger = logging.getLogger(__name__)
 
 
-class ArticleExecutor(BaseExecutor):
+class Executor(BaseExecutor):
 
-    def __init__(self, name, to, subjects, cache, topn=15, interval=86400, *args, **kwargs):
-        self.name = name
-        self.to = to if isinstance(to, (tuple, list)) else [to]
-        self.subjects = subjects if isinstance(subjects, (tuple, list)) else [subjects]
-        self.cache = cache
-        self.topn = topn
-        self.articles = []
-        self.interval = interval
-
-
-    def execute(self):
-        cache = self.cache
-        interval = self.interval
-
-        now = time.time()
-        articles = []
-
-        for subject in self.subjects:
-            key = "{prefix}:{suffix}".format(prefix=gconf.REDIS_KEY_ARTICLE_PREFIX, suffix=MD5.enctype(subject))
-            article = cache.get(key)
-            if article and now - int(article.get("time")) < interval:
-                articles.append(article)
-
-        self.articles = articles[:self.topn]
-        return len(articles)
+    def __init__(self, name, subjects, cache, topn=15, interval=86400, time_format="%Y-%m-%d", *args, **kwargs):
+        self.__name = name
+        self.__subjects = subjects if isinstance(subjects, (tuple, list)) else [subjects]
+        self.__cache = cache
+        self.__topn = topn
+        self.__interval = interval
+        self.__time_format = time_format
 
 
-    def get_to(self):
-        return self.to
+    def __call__(self):
+        _name = self.__name
+        _cache = self.__cache
+        _interval = self.__interval
+        _subjects = self.__subjects
+        _time_format = self.__time_format
 
+        _articles = []
 
-    def get_msg(self):
-        msgs = ["[{0}]{1}:\n".format(datetime.now().strftime("%Y-%m-%d"), self.name)]
-        for idx, article in enumerate(self.articles):
-            article["url"] = URL.short(article.get("url")) # short url
-            msgs.append("{idx}. [{name}]{title}\n{url}\n".format(idx=idx + 1, **article))
-        return "\n".join(msgs)
+        _now = time.time()
+        for _subject in _subjects:
+            _key = "{prefix}:{suffix}".format(prefix=gconf.REDIS_KEY_ARTICLE_PREFIX, suffix=MD5.enctype(_subject))
+            _article = _cache.get(_key)
+            if _article and _now - int(_article.get("time")) < _interval:
+                _articles.append(_article)
+
+        if _articles:
+            _msgs = ["[{0}]{1}:\n".format(datetime.now().strftime(_time_format), _name)]
+            for idx, _article in enumerate(_articles):
+                _article["url"] = URL.short(_article.get("url")) # short url
+                _msgs.append("{idx}. [{name}]{title}\n{url}\n".format(idx=idx + 1, **_article))
+            yield "\n".join(_msgs)
+

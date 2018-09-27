@@ -12,19 +12,17 @@ from .base import BaseExecutor
 
 logger = logging.getLogger(__name__)
 
-class TulingExecutor(BaseExecutor):
+class Executor(BaseExecutor):
 
-    def __init__(self, to, *args, **kwargs):
-        self.to = to if isinstance(to, (tuple, list)) else [to]
-        self.msg = None
+    def __init__(self, msg, *args, **kwargs):
+        self.__msg = msg
 
-    def execute(self, to, msg):
-
-        json_content = {
+    def __call__(self):
+        _json_content = {
             "reqType" : 0,
             "perception" : {
                 "inputText": {
-                    "text" : msg
+                    "text" : self.__msg
                 }
             },
             "userInfo" : {
@@ -32,30 +30,19 @@ class TulingExecutor(BaseExecutor):
                 "userId" : gconf.TULING_APIKEY,
             }
         }
-        self.to = to
-        self.msg = '不知道你说什么'
 
         try:
-            response = requests.post("http://openapi.tuling123.com/openapi/api/v2", json=json_content, timeout=5)
-            if not response.ok:
-                return False
+            _response = requests.post("http://openapi.tuling123.com/openapi/api/v2", json=_json_content, timeout=5)
+            if not _response.ok:
+                return None
 
-            json = response.json()
-            for result in json.get("results", []):
-                if "text" == result.get("resultType"):
-                    self.msg = result.get("values", {}).get("text")
+            _json = _response.json()
+            for _result in _json.get("results", []):
+                if "text" == _result.get("resultType"):
+                    yield _result.get("values", {}).get("text")
                     break
-
-            return self.msg
         except BaseException as e:
             logger.exception(e)
             logger.error(traceback.format_exc())
-            return False
+            return None
 
-
-    def get_to(self):
-        return self.to
-
-
-    def get_msg(self):
-        return self.msg

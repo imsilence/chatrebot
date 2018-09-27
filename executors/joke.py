@@ -12,53 +12,42 @@ from .base import BaseExecutor
 
 logger = logging.getLogger(__name__)
 
-class JokeExecutor(BaseExecutor):
+class Executor(BaseExecutor):
 
-    def __init__(self, to, *args, **kwargs):
-        self.to = to if isinstance(to, (tuple, list)) else [to]
-        self.msg = None
-
-    def execute(self):
-        joke_content = None
-        joke_types = {"video" : "vid", "image" : "img", "gif" : "img"}
+    def __call__(self):
+        _joke_content = None
+        _joke_types = {"video" : "vid", "image" : "img", "gif" : "img"}
         try:
-            response = requests.get("https://www.apiopen.top/satinGodApi?type=1&page=1", timeout=5)
-            if not response.ok:
-                return False
+            _response = requests.get("https://www.apiopen.top/satinGodApi?type=1&page=1", timeout=5)
+            if not _response.ok:
+                return None
 
-            json = response.json()
-            if json.get("code") != 200:
-                return False
+            _json = _response.json()
+            if _json.get("code") != 200:
+                return None
 
-            jokes = json.get("data")
+            _jokes = _json.get("data")
             for _ in range(10):
-                joke = random.choice(jokes)
-                joke_type = joke.get("type")
-                joke_content = joke.get(joke_type)
-                if "text" == joke_type:
-
+                _joke = random.choice(_jokes)
+                _joke_type = _joke.get("type")
+                _joke_content = _joke.get(_joke_type)
+                if "text" == _joke_type:
+                    yield _joke_content
                     break
-                response = requests.get(joke_content)
-                if not response.ok:
+
+                _response = requests.get(_joke_content)
+                if not _response.ok:
                     continue
 
-                suffix = joke_content.rpartition(".")[-1]
-                path = os.path.join(gconf.BASE_DIR, "temp", "{0}.{1}".format(random.randint(0, 10), suffix))
-                with open(path, "wb") as fhandler:
-                    fhandler.write(response.content)
-                self.msg = "@{0}@{1}".format(joke_types.get(joke_type), path)
+                _suffix = _joke_content.rpartition(".")[-1]
+                _path = os.path.join(gconf.BASE_DIR, "temp", "{0}.{1}".format(random.randint(0, 10), _suffix))
+                with open(_path, "wb") as _fhandler:
+                    _fhandler.write(_response.content)
+
+                yield "@{0}@{1}".format(_joke_types.get(_joke_type), _path)
                 break
 
-            return self.msg
         except BaseException as e:
             logger.exception(e)
             logger.error(traceback.format_exc())
-            return False
-
-
-    def get_to(self):
-        return self.to
-
-
-    def get_msg(self):
-        return self.msg
+            return None

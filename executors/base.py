@@ -3,16 +3,8 @@ from abc import ABCMeta, abstractmethod
 
 class BaseExecutor(metaclass=ABCMeta):
 
-    @abstractmethod
-    def execute(self):
+    def __init__(self, *args, **kwargs):
         pass
 
-
-    @abstractmethod
-    def get_to(self):
-        pass
-
-
-    @abstractmethod
-    def get_msg(self):
-        pass
+    def __call__(self):
+        return None

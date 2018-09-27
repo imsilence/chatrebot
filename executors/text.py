@@ -3,20 +3,11 @@ from datetime import datetime
 
 from .base import BaseExecutor
 
-class TextExecutor(BaseExecutor):
+class Executor(BaseExecutor):
 
-    def __init__(self, to, msg, tpl='[{time}]: {msg}',*args, **kwargs):
-        self.to = to if isinstance(to, (tuple, list)) else [to]
-        self.msg = msg
-        self.tpl = tpl
+    def __init__(self, msg, tpl='[{time}]: {msg}', *args, **kwargs):
+        self.__msg = msg
+        self.__tpl = tpl
 
-    def execute(self):
-        return True
-
-
-    def get_to(self):
-        return self.to
-
-
-    def get_msg(self):
-        return self.tpl.format(time=datetime.now().strftime("%Y-%m-%d %H:%M"), msg=self.msg)
+    def __call__(self):
+        yield self.__tpl.format(time=datetime.now().strftime("%Y-%m-%d %H:%M"), msg=self.__msg)
